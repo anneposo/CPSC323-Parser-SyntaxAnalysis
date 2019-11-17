@@ -32,7 +32,7 @@ void openFiles(char *fileName) {
 	outputPtr = fopen("output.txt", "w"); // open output file with write permissions
 }
 
-void closeFiles(void) { // closes both input and output files
+void closeFiles() { // closes both input and output files
 	fclose(fp);
 	fclose(outputPtr);
 }
@@ -49,7 +49,31 @@ F -> ( E ) | id           Factor          ->  ( Expression ) | id
 
 ********************************************************************************************************/
 
+void match(char ch) {
+	if (ch == nextChar) { next(); }
+	else {
+		printf("Error matching rule \n\n");
+		exit(2);
+	}
+}
 
+void next() {
+	nextChar = buffer[index++];
+}
+
+void F() {
+	if (nextChar == T_L_PARENS) {
+		match(T_L_PARENS);
+		//E(); 								// need to implement E procedure
+		match(T_R_PARENS);
+		// print production rule F
+	}
+	else if(nextChar == T_ID) {
+		match(T_ID);
+		// print production rule F
+	}
+	else { printf("Syntax Error"); }
+}
 
 
 int main (int argc, char *argv[]) {
