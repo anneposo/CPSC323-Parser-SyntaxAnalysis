@@ -19,6 +19,7 @@ enum TerminalSymbols {
 	T_L_PARENS,	// (
 	T_R_PARENS,	// )
 	T_ID				// identifier
+	T_EMPTY			// empty (epsilon)
 };
 
 void openFiles(char *fileName) {
@@ -35,6 +36,20 @@ void closeFiles(void) { // closes both input and output files
 	fclose(fp);
 	fclose(outputPtr);
 }
+
+/******************************************** GRAMMAR RULES ********************************************
+
+S -> A										Statement				->	Assign
+A -> id = E;							Assign 					->	id = Expression;
+E -> TE'									Expression			->	Term ExpressionPrime
+E' -> +TE' | -TE' | e			ExpressionPrime	->	+ Term ExpressionPrime | - Term ExpressionPrime | empty
+T -> FT'									Term						->	Factor TermPrime
+T' -> *FT' | /FT' | e			TermPrime				->	* Factor TermPrime | / Factor TermPrime | empty
+F -> ( E ) | id						Factor					->	( Expression ) | id
+
+********************************************************************************************************/
+
+
 
 
 int main (int argc, char *argv[]) {
