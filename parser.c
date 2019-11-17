@@ -41,11 +41,11 @@ void closeFiles(void) { // closes both input and output files
 
 S -> A                    Statement       ->  Assign
 A -> id = E;              Assign          ->  id = Expression;
-E -> TE'									Expression      ->  Term ExpressionPrime
-E' -> +TE' | -TE' | e			ExpressionPrime ->  + Term ExpressionPrime | - Term ExpressionPrime | empty
-T -> FT'									Term            ->  Factor TermPrime
-T' -> *FT' | /FT' | e			TermPrime       ->  * Factor TermPrime | / Factor TermPrime | empty
-F -> ( E ) | id						Factor          ->  ( Expression ) | id
+E -> TE'                  Expression      ->  Term ExpressionPrime
+E' -> +TE' | -TE' | e     ExpressionPrime ->  + Term ExpressionPrime | - Term ExpressionPrime | empty
+T -> FT'                  Term            ->  Factor TermPrime
+T' -> *FT' | /FT' | e     TermPrime       ->  * Factor TermPrime | / Factor TermPrime | empty
+F -> ( E ) | id           Factor          ->  ( Expression ) | id
 
 ********************************************************************************************************/
 
