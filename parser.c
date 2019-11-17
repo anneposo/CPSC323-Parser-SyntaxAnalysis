@@ -61,6 +61,7 @@ void next() {
 	nextChar = buffer[index++];
 }
 
+// F -> ( E ) | id
 void F() {
 	if (nextChar == T_L_PARENS) {
 		match(T_L_PARENS);
@@ -73,6 +74,26 @@ void F() {
 		// print production rule F
 	}
 	else { printf("Syntax Error"); }
+}
+
+// T' -> *FT' | /FT' | e
+void TP() { //TPrime
+	if (nextChar == T_MULTI) {
+		match(T_MULTI);
+		F();
+		TP();
+		// print production rule T'
+	}
+	else if (nextChar == T_DIV) {
+		match(T_DIV);
+		F();
+		TP();
+		// print production rule T'
+	}
+	else if (nextChar == T_EMPTY) {
+		match(T_EMPTY);
+		// print production rule T'
+	}
 }
 
 
