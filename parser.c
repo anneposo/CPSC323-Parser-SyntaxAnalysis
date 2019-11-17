@@ -48,52 +48,70 @@ T' -> *FT' | /FT' | e     TermPrime       ->  * Factor TermPrime | / Factor Term
 F -> ( E ) | id           Factor          ->  ( Expression ) | id
 
 ********************************************************************************************************/
+bool isFollowTP(const char *ch) { // Follow(T') = { +, ), $ }
+	const char *followTP[] = { "+", ")", "\0", ";" };
+	for (int i = 0; i < 4; i++) {
+		if (strcmp(followTP[i], ch) == 0) {
+			match = 1;
+			break;
+		}
+	}
+	return match;
+}
+
+bool isFollowEP(const char *ch) { // Follow(E') = { ), $ }
+	const char *followEP[] = { ")", "\0", ";" };
+	for (int i = 0; i < 3; i++) {
+		if (strcmp(followEP[i], ch) == 0) {
+			match = 1;
+			break;
+		}
+	}
+	return match;
+}
 
 void match(char ch) {
-	if (ch == nextChar) { next(); }
+	if (ch == nextChar) { nextChar = buffer[index++]; } // if matches, go to next
 	else {
 		printf("Error matching rule \n\n");
 		exit(2);
 	}
 }
 
-void next() {
-	nextChar = buffer[index++];
-}
-
 // F -> ( E ) | id
 void F() {
-	if (nextChar == T_L_PARENS) {
-		match(T_L_PARENS);
+	if (nextChar == '(') {
+		match('(');
 		//E(); 								// need to implement E procedure
-		match(T_R_PARENS);
+		match(')');
 		// print production rule F
 	}
 	else if(nextChar == T_ID) {
 		match(T_ID);
 		// print production rule F
 	}
-	else { printf("Syntax Error"); }
+	else { printf("Syntax Error. Token in First of F expected."); }
 }
 
 // T' -> *FT' | /FT' | e
 void TP() { //TPrime
-	if (nextChar == T_MULTI) {
-		match(T_MULTI);
+	if (nextChar == '*') {
+		match('*');
 		F();
 		TP();
 		// print production rule T'
 	}
-	else if (nextChar == T_DIV) {
-		match(T_DIV);
+	else if (nextChar == '/') {
+		match('/');
 		F();
 		TP();
 		// print production rule T'
 	}
-	else if (nextChar == T_EMPTY) {
+	else if (!(isFollowTP(nextChar))) {
 		match(T_EMPTY);
 		// print production rule T'
 	}
+	else { printf("Syntax Error. Token in First of T' expected."); }
 }
 
 
