@@ -2,12 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-
-void openFiles(char*);
-void closeFiles();
-
-FILE *fp; // file pointer to input source code file
-FILE *outputPtr; // file pointer to output text file
+#include "parser.h"
 
 enum NonTerminalSymbols {
 	NT_S, // Statement
@@ -43,7 +38,12 @@ void closeFiles(void) { // closes both input and output files
 
 
 int main (int argc, char *argv[]) {
+	char ch;
 	openFiles(argv[1]);
+
+	while ((ch = fgetc(fp)) != EOF) {
+    printf("%c", ch);
+  }
 
 	closeFiles();
   return 0;
