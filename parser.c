@@ -4,6 +4,7 @@
 #include <string.h>
 #include <ctype.h>
 #include "parser.h"
+#include "lexer.h"
 
 enum Symbols {
 	NT_S,       // Statement
@@ -19,7 +20,9 @@ enum Symbols {
 	T_R_PARENS, // )
 	T_ID,       // identifier
 	T_NUM,      // integer number
-	T_EMPTY     // empty (epsilon)
+	T_EMPTY,    // empty (epsilon)
+	T_COMMA,    // ,
+	T_KEYWORD,  // int, float, bool, char
 };
 
 enum Symbols lexer(char ch) {
@@ -106,27 +109,13 @@ T -> int | float | bool   Type            ->  int | float | bool
 Mid -> , id Mid           MoreIds         ->  , id MoreIds
 
 ********************************************************************************************************/
-bool isFollowTP(char ch) { // Follow(T') = { +, ), $ }
-	const char *followTP[] = { "+", ")", "\0", ";" };
-	int match = 0;
-	for (int i = 0; i < 4; i++) {
-		if (strchr(followTP[i], ch) == 0) {
-			match = 1;
-			break;
-		}
-	}
-	return match;
-}
 
-bool isFollowEP(const char *ch) { // Follow(E') = { ), $ }
-	const char *followEP[] = { ")", "\0", ";" };
-	int match = 0;
-	for (int i = 0; i < 3; i++) {
-		if (strcmp(followEP[i], ch) == 0) {
-			match = 1;
-			break;
-		}
-	}
+bool whiteSpace(char ch) {
+	int match;
+  switch (ch) {
+    case ' ': case '\t': case '\n': match = 1; break;
+    default: match = 0; break;
+  }
 	return match;
 }
 
@@ -141,6 +130,11 @@ void match(char ch) {
 void next() {
 	static int i = 0;
 	nextChar = buffer[i++];
+	if(whiteSpace(nextChar)) {
+		while((whiteSpace(nextChar))) {
+			nextChar = buffer[i++];
+		}
+	}
 }
 
 // F -> ( E ) | id
@@ -292,19 +286,44 @@ void S() {
 	}
 }
 
+// Mid -> , id Mid
+void Mid() {
+	if(nextChar == ',') {
+		nextChar = lexer(nextChar);
+		printf("Mid -> , id Mid\n");
+		match(T_COMMA);
+		if (isalpha(nextChar) > 0) {
+			nextChar = lexer(nextChar);
+			printf("Mid -> , id Mid\n");
+			match(T_ID);
+			Mid();
+		} else { printf("Syntax Error. Mismatch in Rule A.\n"); }
+	}
+	else { printf("Syntax Error. Expected token in First Mid.\n"); }
+}
+
+//Type -> int | float | bool
+void Type() {
+	if(isalpha(nextChar) > 0) {
+		nextChar = lexer(nextChar);
+		printf("Type -> int | float | bool\n");
+	}
+}
+
 void parser() {
 	S();
 }
 
 // S -> D
 // D -> T id Mid
-// T -> int | float | bool
-// Mid -> , id Mid
+
 
 int main (int argc, char *argv[]) {
 	char ch;
 	printf("Enter a string: ");
-	scanf("%s", buffer);
+	fgets(buffer, sizeof(buffer), stdin);
+  buffer[strcspn(buffer, "\n")] = '\0';
+	//scanf("%s", buffer);
 	nextChar = buffer[0];
 	//openFiles(argv[1]);
 
