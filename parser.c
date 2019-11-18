@@ -130,7 +130,7 @@ void match(char ch) {
 void next() {
 	static int i = 0;
 	nextChar = buffer[i++];
-	if(whiteSpace(nextChar)) {
+	if(whiteSpace(nextChar)) { // compiler ignores whitespaces between lexemes
 		while((whiteSpace(nextChar))) {
 			nextChar = buffer[i++];
 		}
@@ -308,6 +308,15 @@ void Type() {
 		nextChar = lexer(nextChar);
 		printf("Type -> int | float | bool\n");
 	}
+	/* if(isalpha(nextChar) > 0) {
+		 	nextChar = lexer_main(nextChar) will increment parser's buffer[i++] for every state transitioned
+					and will print whole keyword
+		 		if(nextChar == T_KEYWORD) {
+					printf("Type -> int | float | bool\n");
+		 		}
+		}
+		else { printf("Syntax Error. Expected token in First Type.\n"); }
+	*/
 }
 
 void parser() {
