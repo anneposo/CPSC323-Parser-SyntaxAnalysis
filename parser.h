@@ -6,8 +6,7 @@
 enum Symbols lexer(char);
 void openFiles(char*);
 void closeFiles();
-bool isFollowTP(char ch);
-bool isFollowEP(const char *ch);
+bool whiteSpace(char);
 void match(char ch);
 void next();
 void F();
@@ -18,6 +17,8 @@ void E();
 void A();
 void S();
 void parser();
+
+extern void lexer_main(char);
 
 FILE *fp; // file pointer to input source code file
 FILE *outputPtr; // file pointer to output text file
