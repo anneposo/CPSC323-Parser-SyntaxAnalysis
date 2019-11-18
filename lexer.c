@@ -8,6 +8,7 @@ void openFiles(char *);
 void closeFiles();
 bool isSeparator(char);
 bool isOperator(char);
+bool isEmpty(char);
 bool isKeyword(const char *);
 void lexer (char);
 
@@ -69,6 +70,14 @@ bool isKeyword(const char* buf) {
 	return match;
 }
 
+bool isEmpty(char ch) {
+  int match;
+  switch (ch) {
+    case ' ': case '\t': case '\n': match = 1; break;
+    default: match = 0; break;
+  }
+}
+
 void lexer (char ch) {
   char symBuf;
   char buffer[100];
@@ -116,7 +125,7 @@ void lexer (char ch) {
     // }
   }
   else {
-    while (!(isSeparator(ch)) && !(isOperator(ch)) && ch != ' ') {
+    while (!(isSeparator(ch)) && !(isOperator(ch)) && !(isEmpty(ch)) && ch != '\0') {
       switch(currentState) {
         case START:   // 0 - initial identifier state
           if (ch == '\r' || ch == ' ' || ch == '\n' || ch == '\t') {
@@ -207,7 +216,7 @@ void lexer (char ch) {
   				break;
       }
       ch = str[++str_i];
-      if (isSeparator(ch) || isOperator(ch)) {
+      if (isSeparator(ch) || isOperator(ch) || isEmpty(ch) || ch == '\0') {
         if (currentState == IN_ID || currentState == ID_START) {
           currentState = ID_END;
         }
