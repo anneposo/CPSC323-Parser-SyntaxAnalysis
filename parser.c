@@ -90,6 +90,7 @@ void closeFiles() { // closes both input and output files
 
 /******************************************** GRAMMAR RULES ********************************************
 
+1ST ITERATION:
 S -> A                    Statement       ->  Assign
 A -> id = E;              Assign          ->  id = Expression;
 E -> TE'                  Expression      ->  Term ExpressionPrime
@@ -97,6 +98,12 @@ E' -> +TE' | -TE' | e     ExpressionPrime ->  + Term ExpressionPrime | - Term Ex
 T -> FT'                  Term            ->  Factor TermPrime
 T' -> *FT' | /FT' | e     TermPrime       ->  * Factor TermPrime | / Factor TermPrime | empty
 F -> ( E ) | id           Factor          ->  ( Expression ) | id
+
+2ND ITERATION:
+S -> D                    Statement       ->  Declarative
+D -> T id Mid             Declarative     ->  Type id MoreIds
+T -> int | float | bool   Type            ->  int | float | bool
+Mid -> , id Mid           MoreIds         ->  , id MoreIds
 
 ********************************************************************************************************/
 bool isFollowTP(char ch) { // Follow(T') = { +, ), $ }
@@ -289,6 +296,11 @@ void parser() {
 	S();
 }
 
+// S -> D
+// D -> T id Mid
+// T -> int | float | bool
+// Mid -> , id Mid
+
 int main (int argc, char *argv[]) {
 	char ch;
 	printf("Enter a string: ");
@@ -296,9 +308,6 @@ int main (int argc, char *argv[]) {
 	nextChar = buffer[0];
 	//openFiles(argv[1]);
 
-	// for (int i = 0; i < sizeof(buffer); i++) {
-	// 	lexer(buffer[i]);
-	// }
 	parser();
 	//while ((ch = fgetc(fp)) != EOF) {
   // printf("%c", ch);
