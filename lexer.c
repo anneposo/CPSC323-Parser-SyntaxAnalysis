@@ -10,7 +10,7 @@ bool isSeparator(char);
 bool isOperator(char);
 bool isEmpty(char);
 bool isKeyword(const char *);
-void lexer (char);
+void lexer_main (char);
 
 FILE *fp; // file pointer to input source code file
 FILE *outputPtr; // file pointer to output text file
@@ -78,7 +78,7 @@ bool isEmpty(char ch) {
   }
 }
 
-void lexer (char ch) {
+void lexer_main (char ch) {
   char symBuf;
   char buffer[100];
   int i = 0;
@@ -265,7 +265,7 @@ int main () {
 
   ch = str[0];
   //printf("ch = %c", ch);
-  lexer(ch);
+  lexer_main(ch);
 
   return 0;
 }
