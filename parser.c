@@ -57,19 +57,16 @@ enum Symbols lexer(char ch) {
 	}
 }
 
-void openFiles(char *fileName) {
+void openFile(char *fileName) {
 	fp = fopen(fileName, "r");
 	if (fp == NULL) {
 		printf("Could not open file.\n");
 		exit(1);
 	} else { printf("Opened %s successfully.\n\n", fileName); }
-
-	outputPtr = fopen("output.txt", "w"); // open output file with write permissions
 }
 
-void closeFiles() { // closes both input and output files
+void closeFile() { // closes both input and output files
 	fclose(fp);
-	fclose(outputPtr);
 }
 
 /******************************************** GRAMMAR RULES ********************************************
@@ -248,7 +245,7 @@ void A() {
 //S -> A
 void S() {
 	if(isalpha(nextChar) > 0) {
-		nextChar = lexer(nextChar);
+		nextChar = lexer_main(nextChar);
 		printf("S -> A\n");
 		match(T_ID);
 		A();
@@ -302,6 +299,7 @@ void parser() {
 int main (int argc, char *argv[]) {
 	char ch;
 	int i = 0;
+	outputPtr = fopen("output.txt", "w"); // open output file with write permissions
 
 	printf("Run the program with no command line arguments in order to parse a\n");
 	printf("string via stdin. Otherwise, run the program with a source code\n");
@@ -313,7 +311,7 @@ int main (int argc, char *argv[]) {
   	buffer[strcspn(buffer, "\n")] = '\0';
 	}
 	else {
-		openFiles(argv[1]);                   // else input source code filename
+		openFile(argv[1]);                   // else input source code filename
 		while ((ch = fgetc(fp)) != EOF) {     // to parse as command line argv[1]
 				buffer[i++] = ch;
 	  }
@@ -321,7 +319,7 @@ int main (int argc, char *argv[]) {
 	}
 
 	nextChar = buffer[0];
-	printf("nextChar = %c\n", nextChar);
+	//printf("nextChar = %c\n", nextChar);
 	parser();
 
 
@@ -330,8 +328,12 @@ int main (int argc, char *argv[]) {
 		printf("\nParsing completed successfully.\n");
 	}
 
+	printf("\nOutput recorded in output.txt.\n");
+
 	if (argc != 1) {
-		closeFiles();
+		closeFile();
 	}
+
+	fclose(outputPtr);
   return 0;
 }

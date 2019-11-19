@@ -3,9 +3,28 @@
 
 #define BUFSIZE 100
 
+enum Symbols {
+	NT_S,       // Statement
+	NT_E,       // Expression
+	NT_A,       // Assignment
+	NT_T,       // Term
+	NT_F,       // Factor
+	T_PLUS,     // +
+	T_MINUS,    // -
+	T_MULTI,    // *
+	T_DIV,      // /
+	T_L_PARENS, // (
+	T_R_PARENS, // )
+	T_ID,       // identifier
+	T_NUM,      // integer number
+	T_EMPTY,    // empty (epsilon)
+	T_COMMA,    // ,
+	T_KEYWORD,  // int, float, bool, char
+};
+
 enum Symbols lexer(char);
-void openFiles(char*);
-void closeFiles();
+void openFile(char*);
+void closeFile();
 bool whiteSpace(char);
 void match(char ch);
 void next();
@@ -18,18 +37,11 @@ void A();
 void S();
 void parser();
 
-extern void lexer_main(char);
+extern enum Symbols lexer_main(char);
 
 FILE *fp; // file pointer to input source code file
 FILE *outputPtr; // file pointer to output text file
 
 char nextChar;
 char buffer[BUFSIZE];
-
-int errorS  = 0;
-int errorA  = 0;
-int errorE  = 0;
-int errorEP = 0;
-int errorT  = 0;
-int errorTP = 0;
-int errorF  = 0;
+int buf_i = 0;
