@@ -6,25 +6,6 @@
 #include "parser.h"
 #include "lexer.h"
 
-enum Symbols {
-	NT_S,       // Statement
-	NT_E,       // Expression
-	NT_A,       // Assignment
-	NT_T,       // Term
-	NT_F,       // Factor
-	T_PLUS,     // +
-	T_MINUS,    // -
-	T_MULTI,    // *
-	T_DIV,      // /
-	T_L_PARENS, // (
-	T_R_PARENS, // )
-	T_ID,       // identifier
-	T_NUM,      // integer number
-	T_EMPTY,    // empty (epsilon)
-	T_COMMA,    // ,
-	T_KEYWORD,  // int, float, bool, char
-};
-
 enum Symbols lexer(char ch) {
 	switch(ch) {
 		case '+':
@@ -128,11 +109,10 @@ void match(char ch) {
 }
 
 void next() {
-	static int i = 0;
-	nextChar = buffer[i++];
+	nextChar = buffer[buf_i++];
 	if(whiteSpace(nextChar)) { // compiler ignores whitespaces between lexemes
 		while((whiteSpace(nextChar))) {
-			nextChar = buffer[i++];
+			nextChar = buffer[buf_i++];
 		}
 	}
 }
@@ -153,7 +133,6 @@ void F() {
 	}
 	else {
 		printf("Syntax Error. Expected token in First F.");
-		errorF = 1;
 	}
 }
 
@@ -180,7 +159,6 @@ void TP() { //TPrime
 	}
 	else {
 		printf("Syntax Error. Expected token in First T'.\n");
-		errorTP = 1;
 	}
 }
 
@@ -200,7 +178,6 @@ void T() {
 	}
 	else {
 		printf("Syntax Error. Expected token in First T.\n");
-		errorT = 1;
 	}
 }
 
@@ -227,7 +204,6 @@ void EP() {
 	}
 	else {
 		printf("Syntax Error. Expected token in First E'.\n");
-		errorEP = 1;
 	}
 }
 
@@ -247,7 +223,6 @@ void E() {
 	}
 	else {
 		printf("Syntax Error. Expected token in First E.\n");
-		errorE = 1;
 	}
 }
 
@@ -263,26 +238,23 @@ void A() {
 		}
 		else {
 			printf("Syntax Error. Mismatch in Rule A.\n");
-			errorA = 1;
 		}
 	}
 	else {
 		printf("Syntax Error. Expected token in First A.\n");
-		errorA = 1;
 	}
 }
 
 //S -> A
 void S() {
 	if(isalpha(nextChar) > 0) {
-		nextChar = lexer(nextChar);
+		nextChar = lexer_main(nextChar);
 		printf("S -> A\n");
 		match(T_ID);
 		A();
 	}
 	else {
 		printf("Syntax Error. Expected token in First S.\n");
-		errorS = 1;
 	}
 }
 
@@ -329,23 +301,31 @@ void parser() {
 
 int main (int argc, char *argv[]) {
 	char ch;
-	printf("Enter a string: ");
-	fgets(buffer, sizeof(buffer), stdin);
-  buffer[strcspn(buffer, "\n")] = '\0';
-	//scanf("%s", buffer);
-	nextChar = buffer[0];
-	//openFiles(argv[1]);
+	int i = 0;
 
+	if(strcmp(argv[1],"-i") == 0) {         // use ./test -i option to
+		printf("Enter a string: ");           // parse user input via stdin
+		fgets(buffer, sizeof(buffer), stdin);
+  	buffer[strcspn(buffer, "\n")] = '\0';
+	}
+	else {
+		openFiles(argv[1]);                   // else input source code filename
+		while ((ch = fgetc(fp)) != EOF) {     // to parse as command line argv[1] 
+				buffer[i++] = ch;
+	  }
+		printf("buffer: %s", buffer);
+	}
+
+	nextChar = buffer[0];
+	printf("nextChar = %c\n", nextChar);
 	parser();
-	//while ((ch = fgetc(fp)) != EOF) {
-  // printf("%c", ch);
-  //}
+
 
 
 	if (nextChar == '\0') {
 		printf("\nParsing completed successfully.\n");
 	}
 
-	//closeFiles();
+	closeFiles();
   return 0;
 }
