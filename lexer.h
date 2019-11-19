@@ -20,13 +20,11 @@ enum FsmState { START, ID_START, IN_ID, ID_END, KEYWORD_END,
 							 	OPERATOR, OPERATOR_END, SEPARATOR };
 
 void printToken(FILE* fp, const char* token, const char* lexeme) { //print to output.txt
-	fprintf(fp, "%s \t=\t ", token);
-	fprintf(fp, "%s\n", lexeme);
+	fprintf(fp, "\nToken: %s \tLexeme: %s \n", token, lexeme);
 }
 
 void printCharToken(FILE* fp, const char* token, char lexeme) { // for printing single char separator/operator
-	fprintf(fp, "%s \t=\t ", token);
-	fprintf(fp, "%c\n", lexeme);
+	fprintf(fp, "\nToken: %s \tLexeme: %c \n ", token, lexeme);
 }
 
 bool isOperator(char ch) {
@@ -82,36 +80,50 @@ enum Symbols lexer_main (char ch) {
     switch(ch) {
       case '+':
   			printf("\nToken: Operator\tLexeme: %c\n", ch);
+				printCharToken(outputPtr, "OPERATOR", ch);
   			return T_PLUS;
   			break;
   		case '-':
   			printf("\nToken: Operator\tLexeme: %c\n", ch);
+				printCharToken(outputPtr, "OPERATOR", ch);
   			return T_MINUS;
   			break;
   		case '*':
   			printf("\nToken: Operator\tLexeme: %c\n", ch);
+				printCharToken(outputPtr, "OPERATOR", ch);
   			return T_MULTI;
   			break;
   		case '/':
   			printf("\nToken: Operator\tLexeme: %c\n", ch);
+				printCharToken(outputPtr, "OPERATOR", ch);
   			return T_DIV;
   			break;
   		case '(':
   			printf("\nToken: Separator\tLexeme: %c\n", ch);
+				printCharToken(outputPtr, "SEPARATOR", ch);
   			return T_L_PARENS;
   			break;
   		case ')':
   			printf("\nToken: Separator\tLexeme: %c\n", ch);
+				printCharToken(outputPtr, "SEPARATOR", ch);
   			return T_R_PARENS;
   			break;
   		case '=':
   			printf("\nToken: Operator\tLexeme: %c\n", ch);
+				printCharToken(outputPtr, "OPERATOR", ch);
   			break;
   		case ';':
   			printf("\nToken: Separator\tLexeme: %c\n", ch);
+				printCharToken(outputPtr, "SEPARATOR", ch);
   			printf("e -> epsilon\n");
+				printRule(outputPtr, "e -> epsilon");
   			return T_EMPTY;
   			break;
+			default:
+				printf("e -> epsilon\n");
+				printRule(outputPtr, "e -> epsilon");
+				return T_EMPTY;
+				break;
     }
   }
   else {
@@ -206,8 +218,10 @@ enum Symbols lexer_main (char ch) {
   				break;
       }
       //ch = str[++str_i];
-			//ch = buffer[buf_i++];
-			//nextChar = buffer[buf_i++];
+			// ch = buffer[buf_i++];
+			// nextChar = ch;
+			//ch = buffer[++buf_i];
+			//nextChar = ch;
 			if (isSeparator(ch) || isOperator(ch) || isEmpty(ch) || ch == '\0') {
 				switch(currentState) {
 					case IN_ID: case ID_START:
@@ -250,34 +264,10 @@ enum Symbols lexer_main (char ch) {
           }
       }
 			else {
-				ch = buffer[buf_i++];
+				ch = buffer[++buf_i];
 				nextChar = ch;
 			}
 
-
-      if (symBuf != 0) { // for cases where separator/operator is next to identifier/number
-  			if (isSeparator(ch)) {
-          printf("\nToken: Separator\tLexeme: %c\n", symBuf);
-          printCharToken(outputPtr, "SEPARATOR", symBuf);
-  			}
-  			else if (isOperator(ch)) {
-					printf("\nToken: Operator\tLexeme: %c\n", symBuf);
-				  printCharToken(outputPtr, "OPERATOR", symBuf);
-				}
-  			symBuf = 0;
-  		}
     } // while bracket close
   } // else bracket close
 } // function bracket close
-
-// int main () {
-//   char ch;
-//   printf("Enter a string: ");
-//   scanf("%s", str);
-//
-//   ch = str[0];
-//   //printf("ch = %c", ch);
-//   lexer_main(ch);
-//
-//   return 0;
-// }

@@ -23,8 +23,9 @@ enum Symbols {
 };
 
 enum Symbols lexer(char);
-void openFile(char*);
+void openFile(char *);
 void closeFile();
+void printRule(FILE *, const char *);
 bool whiteSpace(char);
 void match(char ch);
 void next();

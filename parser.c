@@ -37,7 +37,9 @@ enum Symbols lexer(char ch) {
 			break;
 		case ';':
 			printf("\nToken: Separator\tLexeme: %c\n", ch);
+			printCharToken(outputPtr, "SEPARATOR", ch);
 			printf("e -> epsilon\n");
+			printRule(outputPtr, "e -> epsilon");
 			return T_EMPTY;
 			break;
 		default:
@@ -51,6 +53,7 @@ enum Symbols lexer(char ch) {
 			}
 			else {
 				printf("e -> epsilon\n");
+				printRule(outputPtr, "e -> epsilon");
 				return T_EMPTY;
 			}
 			break;
@@ -88,6 +91,10 @@ Mid -> , id Mid           MoreIds         ->  , id MoreIds
 
 ********************************************************************************************************/
 
+void printRule(FILE* fp, const char* rule) {
+	fprintf(fp, "%s\n", rule);
+}
+
 bool whiteSpace(char ch) {
 	int match;
   switch (ch) {
@@ -100,7 +107,8 @@ bool whiteSpace(char ch) {
 void match(char ch) {
 	if (ch == nextChar) { next(); } // if matches, go to next
 	else {
-		printf("Error matching rule \n\n");
+		printf("\nError matching rule \n\n");
+		printRule(outputPtr, "\nError matching rule \n");
 		exit(2);
 	}
 }
@@ -117,109 +125,126 @@ void next() {
 // F -> ( E ) | id
 void F() {
 	if (nextChar == '(') {
-		nextChar = lexer(nextChar);
-		match('(');
+		nextChar = lexer_main(nextChar);
+		match(T_L_PARENS);
 		E(); 								// need to implement E procedure
-		match(')');
+		match(T_R_PARENS);
 		printf("F -> ( E ) | id\n");
+		printRule(outputPtr, "F -> ( E ) | id");
 	}
 	else if(isalpha(nextChar) > 0) {
-		nextChar = lexer(nextChar);
+		nextChar = lexer_main(nextChar);
 		match(T_ID);
 		printf("F -> ( E ) | id\n");
+		printRule(outputPtr, "F -> ( E ) | id");
 	}
 	else {
-		printf("Syntax Error. Expected token in First F.");
+		printf("\nSyntax Error. Expected token in First F.");
+		printRule(outputPtr, "\nSyntax Error. Expected token in First F.");
 	}
 }
 
 // T' -> *FT' | /FT' | e
 void TP() { //TPrime
 	if (nextChar == '*') {
-		nextChar = lexer(nextChar);
+		nextChar = lexer_main(nextChar);
 		printf("T' -> *FT' | /FT' | e\n");
+		printRule(outputPtr, "T' -> *FT' | /FT' | e");
 		match(T_MULTI);
 		F();
 		TP();
 	}
 	else if (nextChar == '/') {
-		nextChar = lexer(nextChar);
+		nextChar = lexer_main(nextChar);
 		printf("T' -> *FT' | /FT' | e\n");
+		printRule(outputPtr, "T' -> *FT' | /FT' | e");
 		match(T_DIV);
 		F();
 		TP();
 	}
-	else if(nextChar == ';' || nextChar == '\0') {
-		nextChar = lexer(nextChar);
+	else if(nextChar == ';' || nextChar == '\0'|| whiteSpace(nextChar)) {
+		nextChar = lexer_main(nextChar);
 		printf("T' -> *FT' | /FT' | e\n");
+		printRule(outputPtr, "T' -> *FT' | /FT' | e");
 		match(T_EMPTY);
 	}
 	else {
-		printf("Syntax Error. Expected token in First T'.\n");
+		printf("\nSyntax Error. Expected token in First T'.\n");
+		printRule(outputPtr, "\nSyntax Error. Expected token in First T'.");
 	}
 }
 
 //T -> FT'
 void T() {
 	if(nextChar == '(') {
-		nextChar = lexer(nextChar);
+		nextChar = lexer_main(nextChar);
 		printf("T -> FT'\n");
+		printRule(outputPtr, "T -> FT'");
 		match(T_L_PARENS);
 		TP();
 	}
 	else if(isalpha(nextChar) > 0) {
-		nextChar = lexer(nextChar);
+		nextChar = lexer_main(nextChar);
 		printf("T -> FT'\n");
+		printRule(outputPtr, "T -> FT'");
 		match(T_ID);
 		TP();
 	}
 	else {
-		printf("Syntax Error. Expected token in First T.\n");
+		printf("\nSyntax Error. Expected token in First T.\n");
+		printRule(outputPtr, "\nSyntax Error. Expected token in First T.");
 	}
 }
 
 //E' -> +TE' | -TE' | e
 void EP() {
 	if(nextChar == '+') {
-		nextChar = lexer(nextChar);
+		nextChar = lexer_main(nextChar);
 		printf("E' -> +TE' | -TE' | e\n");
+		printRule(outputPtr, "E' -> +TE' | -TE' | e");
 		match(T_PLUS);
 		T();
 		EP();
 	}
 	else if(nextChar == '-') {
-		nextChar = lexer(nextChar);
+		nextChar = lexer_main(nextChar);
 		printf("E' -> +TE' | -TE' | e\n");
+		printRule(outputPtr, "E' -> +TE' | -TE' | e");
 		match(T_MINUS);
 		T();
 		EP();
 	}
-	else if(nextChar == ';' || nextChar == '\0') {
+	else if(nextChar == ';' || nextChar == '\0' || whiteSpace(nextChar)) {
 		nextChar = lexer(nextChar);
 		printf("E' -> +TE' | -TE' | e\n");
+		printRule(outputPtr, "E' -> +TE' | -TE' | e");
 		match(T_EMPTY);
 	}
 	else {
-		printf("Syntax Error. Expected token in First E'.\n");
+		printf("\nSyntax Error. Expected token in First E'.\n");
+		printRule(outputPtr, "\nSyntax Error. Expected token in First E'.");
 	}
 }
 
 //E -> TE'
 void E() {
 	if(nextChar == '(') {
-		nextChar = lexer(nextChar);
+		nextChar = lexer_main(nextChar);
 		printf("E -> TE'\n");
+		printRule(outputPtr, "E -> TE'");
 		match(T_L_PARENS);
 		EP();
 	}
 	else if(isalpha(nextChar) > 0) {
-		nextChar = lexer(nextChar);
+		nextChar = lexer_main(nextChar);
 		printf("E -> TE'\n");
+		printRule(outputPtr, "E -> TE'");
 		match(T_ID);
 		EP();
 	}
 	else {
-		printf("Syntax Error. Expected token in First E.\n");
+		printf("\nSyntax Error. Expected token in First E.\n");
+		printRule(outputPtr, "\nSyntax Error. Expected token in First E.");
 	}
 }
 
@@ -227,31 +252,36 @@ void E() {
 void A() {
 	if(isalpha(nextChar) > 0) {
 		printf("A -> id = E\n");
+		printRule(outputPtr, "A -> id = E");
 		next();
 		if (nextChar == '=') {
-			lexer(nextChar);
+			lexer_main(nextChar);
 			match('=');
 			E();
 		}
 		else {
-			printf("Syntax Error. Mismatch in Rule A.\n");
+			printf("\nSyntax Error. Mismatch in Rule A.\n");
+			printRule(outputPtr, "\nSyntax Error. Mismatch in Rule A.");
 		}
 	}
 	else {
-		printf("Syntax Error. Expected token in First A.\n");
+		printf("\nSyntax Error. Expected token in First A.\n");
+		printRule(outputPtr, "\nSyntax Error. Expected token in First A.");
 	}
 }
 
 //S -> A
 void S() {
-	if(isalpha(nextChar) > 0) {
+	if(isalpha(nextChar) > 0 || whiteSpace(nextChar)) {
 		nextChar = lexer_main(nextChar);
 		printf("S -> A\n");
+		printRule(outputPtr, "S -> A");
 		match(T_ID);
 		A();
 	}
 	else {
-		printf("Syntax Error. Expected token in First S.\n");
+		printf("\nSyntax Error. Expected token in First S.\n");
+		printRule(outputPtr, "\nSyntax Error. Expected token in First S.");
 	}
 }
 
@@ -266,9 +296,9 @@ void Mid() {
 			printf("Mid -> , id Mid\n");
 			match(T_ID);
 			Mid();
-		} else { printf("Syntax Error. Mismatch in Rule A.\n"); }
+		} else { printf("\nSyntax Error. Mismatch in Rule A.\n"); }
 	}
-	else { printf("Syntax Error. Expected token in First Mid.\n"); }
+	else { printf("\nSyntax Error. Expected token in First Mid.\n"); }
 }
 
 //Type -> int | float | bool
@@ -320,13 +350,12 @@ int main (int argc, char *argv[]) {
 
 	nextChar = buffer[0];
 	//printf("nextChar = %c\n", nextChar);
+
 	parser();
-
-
 
 	if (nextChar == '\0') {
 		printf("\nParsing completed successfully.\n");
-	}
+	} else { printf("Syntax Error. Parsing not completed. \n"); }
 
 	printf("\nOutput recorded in output.txt.\n");
 
