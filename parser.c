@@ -248,7 +248,7 @@ void A() {
 //S -> A
 void S() {
 	if(isalpha(nextChar) > 0) {
-		nextChar = lexer_main(nextChar);
+		nextChar = lexer(nextChar);
 		printf("S -> A\n");
 		match(T_ID);
 		A();
@@ -303,14 +303,18 @@ int main (int argc, char *argv[]) {
 	char ch;
 	int i = 0;
 
-	if(strcmp(argv[1],"-i") == 0) {         // use ./test -i option to
+	printf("Run the program with no command line arguments in order to parse a\n");
+	printf("string via stdin. Otherwise, run the program with a source code\n");
+  printf("filename as argv[1] to parse through the input source code file.\n\n");
+
+	if(argc == 1) {                         // run ./test with no args to
 		printf("Enter a string: ");           // parse user input via stdin
 		fgets(buffer, sizeof(buffer), stdin);
   	buffer[strcspn(buffer, "\n")] = '\0';
 	}
 	else {
 		openFiles(argv[1]);                   // else input source code filename
-		while ((ch = fgetc(fp)) != EOF) {     // to parse as command line argv[1] 
+		while ((ch = fgetc(fp)) != EOF) {     // to parse as command line argv[1]
 				buffer[i++] = ch;
 	  }
 		printf("buffer: %s", buffer);
@@ -326,6 +330,8 @@ int main (int argc, char *argv[]) {
 		printf("\nParsing completed successfully.\n");
 	}
 
-	closeFiles();
+	if (argc != 1) {
+		closeFiles();
+	}
   return 0;
 }
