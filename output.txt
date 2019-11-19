@@ -1,0 +1,13 @@
+
+Token: IDENTIFIER 	Lexeme: x 
+S -> A
+A -> id = E
+
+Token: OPERATOR 	Lexeme: = 
+ 
+Token: IDENTIFIER 	Lexeme: a 
+E -> TE'
+
+Token: SEPARATOR 	Lexeme: ; 
+ e -> epsilon
+E' -> +TE' | -TE' | e
