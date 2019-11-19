@@ -8,6 +8,14 @@ Token: OPERATOR 	Lexeme: =
 Token: IDENTIFIER 	Lexeme: a 
 E -> TE'
 
+Token: OPERATOR 	Lexeme: + 
+ E' -> +TE' | -TE' | e
+
+Token: IDENTIFIER 	Lexeme: b 
+T -> FT'
+
 Token: SEPARATOR 	Lexeme: ; 
  e -> epsilon
+T' -> *FT' | /FT' | e
+e -> epsilon
 E' -> +TE' | -TE' | e
