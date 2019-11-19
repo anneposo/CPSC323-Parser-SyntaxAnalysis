@@ -8,33 +8,6 @@
 
 enum Symbols lexer(char ch) {
 	switch(ch) {
-		case '+':
-			printf("\nToken: Operator\tLexeme: %c\n", ch);
-			return T_PLUS;
-			break;
-		case '-':
-			printf("\nToken: Operator\tLexeme: %c\n", ch);
-			return T_MINUS;
-			break;
-		case '*':
-			printf("\nToken: Operator\tLexeme: %c\n", ch);
-			return T_MULTI;
-			break;
-		case '/':
-			printf("\nToken: Operator\tLexeme: %c\n", ch);
-			return T_DIV;
-			break;
-		case '(':
-			printf("\nToken: Separator\tLexeme: %c\n", ch);
-			return T_L_PARENS;
-			break;
-		case ')':
-			printf("\nToken: Separator\tLexeme: %c\n", ch);
-			return T_R_PARENS;
-			break;
-		case '=':
-			printf("\nToken: Operator\tLexeme: %c\n", ch);
-			break;
 		case ';':
 			printf("\nToken: Separator\tLexeme: %c\n", ch);
 			printCharToken(outputPtr, "SEPARATOR", ch);
@@ -43,19 +16,9 @@ enum Symbols lexer(char ch) {
 			return T_EMPTY;
 			break;
 		default:
-			if (isalpha(ch) > 0) {
-				printf("\nToken: Identifier\tLexeme: %c\n", ch);
-				return T_ID;
-			}
-			else if (isdigit(ch) > 0) {
-				printf("\nToken: Identifier\tLexeme: %c\n", ch);
-				return T_NUM;
-			}
-			else {
-				printf("e -> epsilon\n");
-				printRule(outputPtr, "e -> epsilon");
-				return T_EMPTY;
-			}
+			printf("e -> epsilon\n");
+			printRule(outputPtr, "e -> epsilon");
+			return T_EMPTY;
 			break;
 	}
 }
